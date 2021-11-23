@@ -42,6 +42,37 @@ pipeline:
                                         limits:
                                             memory: 2Gi
                                             cpu: "2"
+                          - step:
+                                type: Run
+                                name: Build
+                                identifier: Build
+                                spec:
+                                    connectorRef: account.bootcampdockerhub
+                                    image: nikpap/mvn-openjdk-8:harness
+                                    command: |-
+                                        cd payment-service
+                                        mvn -Dmaven.test.skip=true clean install -X
+                                    privileged: false
+                                    resources:
+                                        limits:
+                                            memory: 1Gi
+                                            cpu: "1"
+                                description: osejfnoesnfg
+                          - step:
+                                type: BuildAndPushDockerRegistry
+                                name: pushToDockerHub
+                                identifier: pushToDockerHub
+                                spec:
+                                    connectorRef: account.bootcampdockerhub
+                                    repo: nikpap/payment-service
+                                    tags:
+                                        - robinsoncoulton-latest
+                                    dockerfile: /harness/payment-service/Dockerfile
+                                    optimize: true
+                                    resources:
+                                        limits:
+                                            memory: 1Gi
+                                            cpu: "1"
               variables: []
     name: demo
     identifier: demo
